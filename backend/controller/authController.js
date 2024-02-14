@@ -7,9 +7,15 @@ const registerController = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    const existingUser = await userModel.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "email is already registered" });
+    const existingEmail = await userModel.findOne({ email });
+    const existingUsername = await userModel.findOne({ username });
+
+    if (existingEmail) {
+      return res.status(400).json({ message: "Email is already registered" });
+    }
+
+    if (existingUsername) {
+      return res.status(400).json({ message: "Username is already taken" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
