@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import the useAuth hook
+import { useAuth } from '../context/AuthContext';
 
 const RegistrationForm = () => {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const { register, error } = useAuth(); // Destructure the error state from useAuth
 
   const [formData, setFormData] = useState({
     username: '',
@@ -17,6 +18,12 @@ const RegistrationForm = () => {
     email: '',
     password: ''
   });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard'); // Redirect if already authenticated
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,8 +41,9 @@ const RegistrationForm = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const response = await register(formData);
-        console.log('response of registration', response);
+        const response = await axios.post('http://localhost:4500/auth/register', formData);
+        const token = response.data.token;
+        localStorage.setItem('token', token);
   
         // Clear form data and errors on successful registration
         setFormData({ username: '', email: '', password: '' });
@@ -43,9 +51,28 @@ const RegistrationForm = () => {
   
         // Redirect the user to the OTP verification page
         navigate('/otp-verification');
-      } catch (error) {
-        // Update the error state with the specific error message
-        console.error('Error during registration:', error);
+      }catch (error) {
+        if (error.response && error.response.data && error.response.data.message) {
+          const errorMessage = error.response.data.message;
+          // Check the error message and update the errors state accordingly
+          if (errorMessage === 'Email is already registered') {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              email: errorMessage
+            }));
+          } else if (errorMessage === 'Username is already taken') {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              username: errorMessage
+            }));
+          } else {
+            console.error('Error during registration:', errorMessage);
+            // You can set a general error message here
+          }
+        } else {
+          console.error('Error during registration:', error);
+          // You can set a general error message here
+        }
       }
     }
   };
@@ -81,23 +108,28 @@ const RegistrationForm = () => {
   return (
     <div className="max-w-md mx-auto mt-8 bg-white p-8 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Registration Form</h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>} {/* Render the error message */}
+      {/* Error handling could be added here */}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="username" className="block mb-1">Username:</label>
-          <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 ${errors.username ? 'border-red-500' : ''}`} />
-          {errors.username && <p className="text-red-500">{errors.username}</p>}
-        </div>
-        <div>
-          <label htmlFor="email" className="block mb-1">Email:</label>
-          <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 ${errors.email ? 'border-red-500' : ''}`} />
-          {errors.email && <p className="text-red-500">{errors.email}</p>}
-        </div>
-        <div>
-          <label htmlFor="password" className="block mb-1">Password:</label>
-          <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 ${errors.password ? 'border-red-500' : ''}`} />
-          {errors.password && <p className="text-red-500">{errors.password}</p>}
-        </div>
+       {/* Display username error */}
+<div>
+  <label htmlFor="username" className="block mb-1">Username:</label>
+  <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 ${errors.username ? 'border-red-500' : ''}`} />
+  {errors.username && <p className="text-red-500">{errors.username}</p>}
+</div>
+
+{/* Display email error */}
+<div>
+  <label htmlFor="email" className="block mb-1">Email:</label>
+  <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 ${errors.email ? 'border-red-500' : ''}`} />
+  {errors.email && <p className="text-red-500">{errors.email}</p>}
+</div>
+
+{/* Display password error */}
+<div>
+  <label htmlFor="password" className="block mb-1">Password:</label>
+  <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500 ${errors.password ? 'border-red-500' : ''}`} />
+  {errors.password && <p className="text-red-500">{errors.password}</p>}
+</div>
         <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300">Register</button>
       </form>
     </div>

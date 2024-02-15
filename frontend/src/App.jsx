@@ -20,14 +20,18 @@ const App = () => {
           <Navbar />
           <div className="container mx-auto mt-4">
             <Routes>
-              {/* <Route path="/"  element={<Home />} /> */}
-              <Route exact path="/" element={<PrivateRoute />}>
-                <Route exact path="/" element={<Home />} />
-              </Route>
+              <Route path="/"  element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
+              
+              <Route  element={<PrivateRoute />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+              </Route>
+
+              
+
               <Route path="/otp-verification" element={<OTPVerification />} />
             </Routes>
           </div>

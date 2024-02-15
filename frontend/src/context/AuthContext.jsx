@@ -1,46 +1,42 @@
-import React, { createContext, useContext, useState } from 'react';
-import axios from 'axios';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
 
-  const register = async (userData) => {
-    try {
-      setError(null); // Clear any previous errors
-      const response = await axios.post('http://localhost:4500/auth/register', userData);
-      const token = response.data.token;
-      localStorage.setItem('token', token);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
       setIsAuthenticated(true);
-      return response.data;
-    } catch (error) {
-      // Set the error state with the specific error message from the server response
-      setError(error.response ? error.response.data.message : 'Registration failed');
-      console.error('Registration failed:', error);
-      throw error; // Re-throw the error for handling in the component
     }
-  };
-  
-  const login = async (email, password) => {
-    try {
-      const response = await axios.post('http://localhost:4500/auth/login', { email, password });
-      const token = response.data.token;
-      localStorage.setItem('token', token);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
+  }, []); // Only runs once on component mount
+
+  const login = (userData) => {
+    setUser(userData);
+    setIsAuthenticated(true);
+    console.log("setIsAuthenticated is set to be tru after successful login",isAuthenticated)
+    console.log("setIsAuthenticated is set to be tru after successful login userdata",user)
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     setIsAuthenticated(false);
+    setUser(null);
   };
 
+  useEffect(() => {
+    console.log("isAuthenticated after login in useEffect:", isAuthenticated);
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    console.log("User data after login in useEffect:", user);
+  }, [user]);
+
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, register, error, setError }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, user}}>
       {children}
     </AuthContext.Provider>
   );
