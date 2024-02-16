@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth(); 
+  const { isAuthenticated, logout, user } = useAuth(); 
   const [isOpen, setIsOpen] = useState(false);
   const navigate =useNavigate()
 
@@ -42,6 +42,11 @@ const Navbar = () => {
                   <Link to="/login" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</Link>
                 </>
               )}
+              {isAuthenticated && user && user.role === 'admin' && ( // Show Register and Login links only if user is not authenticated
+                <>
+                  <Link to="/dashboard" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</Link>
+                </>
+              )}
               {isAuthenticated && ( // Show logout button if user is authenticated
                 <button onClick={handleLogout} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</button>
               )}
@@ -76,6 +81,11 @@ const Navbar = () => {
                 <>
                   <Link to="/register" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</Link>
                   <Link to="/login" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</Link>
+                </>
+              )}
+              {isAuthenticated && user && user.role === 'admin' && ( // Show Register and Login links only if user is not authenticated
+                <>
+                  <Link to="/dashboard" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</Link>
                 </>
               )}
             {isAuthenticated && ( // Show logout button if user is authenticated
