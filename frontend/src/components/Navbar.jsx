@@ -17,6 +17,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout(); // Call the logout function from AuthContext
+    closeMenu()
     navigate('/login')
   };
 

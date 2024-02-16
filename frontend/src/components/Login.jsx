@@ -13,8 +13,7 @@ function Login() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      // console.log('isAuthenticated in Login',isAuthenticated)
-      navigate('/'); // Redirect if already authenticated
+      navigate('/');
     }
   }, [isAuthenticated, navigate]);
 
@@ -31,13 +30,12 @@ function Login() {
       const response = await axios.post('https://mecom-jvcy.onrender.com/auth/login', { email, password });
       const token = response.data.token;
       const userData = response.data.user; 
-      // console.log('response in login',response);
+
       if (!userData) {
         throw new Error('User data is not available.');
       }
       localStorage.setItem('token', token);
       login(userData); 
-      // Redirect the user to another page upon successful login
       navigate('/');
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -52,7 +50,23 @@ function Login() {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="bg-gray-100 p-8 rounded-lg shadow-md w-96">
+      {loading && ( // Show transparent background when loading is true
+        <div className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="sk-cube-grid">
+            <div className="sk-cube sk-cube1"></div>
+            <div className="sk-cube sk-cube2"></div>
+            <div className="sk-cube sk-cube3"></div>
+            <div className="sk-cube sk-cube4"></div>
+            <div className="sk-cube sk-cube5"></div>
+            <div className="sk-cube sk-cube6"></div>
+            <div className="sk-cube sk-cube7"></div>
+            <div className="sk-cube sk-cube8"></div>
+            <div className="sk-cube sk-cube9"></div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-gray-100 p-8 rounded-lg shadow-md w-96 relative">
         <h2 className="text-2xl mb-4">Login</h2>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         <form onSubmit={handleSubmit}>
@@ -64,6 +78,7 @@ function Login() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-3 py-2 border rounded-md"
+              disabled={loading}
             />
           </div>
           <div className="mb-4">
@@ -74,6 +89,7 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               required
               className="w-full px-3 py-2 border rounded-md"
+              disabled={loading}
             />
           </div>
           <button
