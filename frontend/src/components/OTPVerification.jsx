@@ -22,7 +22,7 @@ const OTPVerification = () => {
 
       // Send the OTP and token to the backend for verification
       const response = await axios.post(
-        'http://localhost:4500/auth/verify-otp',
+        'https://mecom-jvcy.onrender.com/auth/verify-otp',
         { otp },
         {
           headers: {
