@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const OTPVerification = () => {
+  const {login} = useAuth()
   const [otp, setOTP] = useState('');
   const [verificationError, setVerificationError] = useState('');
 
@@ -30,7 +32,8 @@ const OTPVerification = () => {
       );
 
       // Handle successful verification
-      navigate('/dashboard');
+      login(response.data.user)
+      navigate('/');
 
     } catch (error) {
       // Handle verification errors

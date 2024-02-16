@@ -9,34 +9,35 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
+      // Set isAuthenticated to true if token exists
       setIsAuthenticated(true);
+
+      // Retrieve user data from local storage
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      setUser(userData);
     }
-  }, []); // Only runs once on component mount
+  }, []); // Run only once when the component mounts
 
   const login = (userData) => {
     setUser(userData);
     setIsAuthenticated(true);
-    console.log("setIsAuthenticated is set to be tru after successful login",isAuthenticated)
-    console.log("setIsAuthenticated is set to be tru after successful login userdata",user)
+    localStorage.setItem('token', userData.token);
+    localStorage.setItem('userData', JSON.stringify(userData));
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userData'); // Remove user data from local storage
     setIsAuthenticated(false);
     setUser(null);
   };
 
-  useEffect(() => {
-    console.log("isAuthenticated after login in useEffect:", isAuthenticated);
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    console.log("User data after login in useEffect:", user);
-  }, [user]);
-
+  // useEffect(() => {
+  //   console.log('isAuthenticated in AuthContext:', isAuthenticated);
+  // }, [isAuthenticated]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, user}}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, user }}>
       {children}
     </AuthContext.Provider>
   );

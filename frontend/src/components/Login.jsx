@@ -11,12 +11,12 @@ function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     console.log('isAuthenticated in Login',isAuthenticated)
-  //     navigate('/'); // Redirect if already authenticated
-  //   }
-  // }, [isAuthenticated, navigate]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      // console.log('isAuthenticated in Login',isAuthenticated)
+      navigate('/'); // Redirect if already authenticated
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ function Login() {
       const response = await axios.post('http://localhost:4500/auth/login', { email, password });
       const token = response.data.token;
       const userData = response.data.user; 
-      console.log('response in login',response);
+      // console.log('response in login',response);
       if (!userData) {
         throw new Error('User data is not available.');
       }

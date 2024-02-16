@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const RegistrationForm = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login} = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -50,6 +50,7 @@ const RegistrationForm = () => {
         setErrors({ username: '', email: '', password: '' });
   
         // Redirect the user to the OTP verification page
+        // login(response.data.user)
         navigate('/otp-verification');
       }catch (error) {
         if (error.response && error.response.data && error.response.data.message) {

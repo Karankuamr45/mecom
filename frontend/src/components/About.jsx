@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 
 function About() {
   const {isAuthenticated} = useAuth();
-  console.log('isAuthenticated in about',isAuthenticated)
+  // console.log('isAuthenticated in about',isAuthenticated)
   return (
     <div>
       About
