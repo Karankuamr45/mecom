@@ -28,7 +28,7 @@ function Login() {
         throw new Error('Please provide both email and password.');
       }
 
-      const response = await axios.post('http://localhost:4500/auth/login', { email, password });
+      const response = await axios.post('https://mecom-jvcy.onrender.com/auth/login', { email, password });
       const token = response.data.token;
       const userData = response.data.user; 
       // console.log('response in login',response);
