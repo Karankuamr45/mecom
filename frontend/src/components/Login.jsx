@@ -93,7 +93,9 @@ function Login() {
             disabled={loading} 
           />
         </div>
-        <button 
+        <p className="mt-2 text-sm text-gray-600">
+        Forgot your password? <Link to="/forgot-password" className="text-blue-500 hover:underline">Reset it here</Link>.
+      </p>        <button 
           type="submit" 
           className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300" 
           disabled={loading}

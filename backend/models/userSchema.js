@@ -36,7 +36,11 @@ const userSchema = new mongoose.Schema({
     },
     otp: {
         type: String, 
-    }
+    },
+    resetPasswordToken: {
+        type: String,
+      },
+
 
 })
 

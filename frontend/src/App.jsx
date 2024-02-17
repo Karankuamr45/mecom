@@ -11,28 +11,36 @@ import OTPVerification from "./components/OTPVerification";
 import Dashboard from "./components/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 
 const App = () => {
-  
   return (
     <AuthProvider>
       <Router>
-        <Layout> {/* Wrap your routes with the Layout component */}
-          
-            <Routes>
-              <Route path="/"  element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              
-              <Route  element={<PrivateRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-              </Route>
+        <Layout>
+          {" "}
+          {/* Wrap your routes with the Layout component */}
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
 
-              <Route path="/otp-verification" element={<OTPVerification />} />
-            </Routes>
-          
+            <Route exact path="/forgot-password" element={<ForgotPassword />} />
+            <Route
+              exact
+              path="/reset-password/:token"
+              element={<ResetPassword />}
+            />
+
+            <Route element={<PrivateRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+
+            <Route path="/otp-verification" element={<OTPVerification />} />
+          </Routes>
         </Layout>
       </Router>
     </AuthProvider>

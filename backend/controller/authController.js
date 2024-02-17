@@ -2,57 +2,7 @@ import userModel from "../models/userSchema.js";
 import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
-
-// const registerController = async (req, res) => {
-//   try {
-//     const { username, email, password } = req.body;
-
-//     const existingEmail = await userModel.findOne({ email });
-//     const existingUsername = await userModel.findOne({ username });
-
-//     if (existingEmail) {
-//       return res.status(400).json({ message: "Email is already registered" });
-//     }
-
-//     if (existingUsername) {
-//       return res.status(400).json({ message: "Username is already taken" });
-//     }
-
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     const newUser = new userModel({
-//       username,
-//       email,
-//       password: hashedPassword,
-//     });
-
-//     await newUser.save();
-
-//     // Generate JWT token
-//     const token = jwt.sign(
-//       { userId: newUser._id, email: newUser.email },
-//       "mynameiskaranandiliveinramparkext",
-//       { expiresIn: "1d" }
-//     );
-
-//     // Generate OTP
-//     const otp = generateOTP();
-
-//     // Save OTP to user document
-//     newUser.otp = otp;
-//     await newUser.save();
-
-//     // Send OTP to the user's email
-//     await sendOtpEmail(email, otp);
-
-//     res
-//       .status(201)
-//       .json({ message: "User Registered Successfully", newUser, token });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Server Error" });
-//   }
-// };
+import crypto from "crypto";
 
 const registerController = async (req, res) => {
   try {
@@ -62,7 +12,9 @@ const registerController = async (req, res) => {
     const lowerCaseUsername = username.toLowerCase();
 
     const existingEmail = await userModel.findOne({ email });
-    const existingUsername = await userModel.findOne({ username: lowerCaseUsername });
+    const existingUsername = await userModel.findOne({
+      username: lowerCaseUsername,
+    });
 
     if (existingEmail) {
       return res.status(400).json({ message: "Email is already registered" });
@@ -107,7 +59,6 @@ const registerController = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 const generateOTP = () => {
   // Generate a random 6-digit OTP
@@ -177,14 +128,14 @@ const verifyOtpController = async (req, res) => {
 
     await user.save();
 
-    res.status(200).json({ message: "Email verified successfully" ,user});
+    res.status(200).json({ message: "Email verified successfully", user });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-const loginController = async (req,res) => {
+const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -208,11 +159,86 @@ const loginController = async (req,res) => {
       { expiresIn: "1d" }
     );
 
-    res.status(200).json({ message: "Login successful", token,user });
+    res.status(200).json({ message: "Login successful", token, user });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-export { registerController, verifyOtpController,loginController };
+const generateResetPasswordToken = () => {
+  // Generate a random token using crypto
+  return crypto.randomBytes(20).toString("hex");
+};
+
+const forgotPasswordController = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate a reset password token 
+    const resetPasswordToken = generateResetPasswordToken();
+
+    // Associate the reset password token with the user
+    user.resetPasswordToken = resetPasswordToken;
+    await user.save();
+
+    const resetPasswordLink = `https://mecom-beryl.vercel.app/reset-password/${resetPasswordToken}`;
+
+    // Generate and send reset password email
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      auth: {
+        user: "karankumarr0002@gmail.com",
+        pass: "nwnjdpiiguwudbnt",
+      },
+    });
+
+    const mailOptions = {
+      from: "karankumarr0002@gmail.com",
+      to: email,
+      subject: "Reset Password",
+      text: `Click the following link to reset your password: ${resetPasswordLink}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Reset password email sent successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const resetPasswordController = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+  try {
+    const user = await userModel.findOne({ resetPasswordToken: token });
+    if (!user) {
+      return res.status(404).json({ message: "Invalid token" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    // Reset password logic
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export {
+  registerController,
+  verifyOtpController,
+  loginController,
+  forgotPasswordController,
+  resetPasswordController
+};
