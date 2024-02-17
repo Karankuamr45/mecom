@@ -43,8 +43,8 @@ const OTPVerification = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      {loading && ( // Show transparent background when loading
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 pt-0 sm:px-6 lg:px-8">
+      {loading && ( // Show loading spinner if loading is true
         <div className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-50 z-50 flex justify-center items-center">
           <div className="sk-cube-grid">
             <div className="sk-cube sk-cube1"></div>

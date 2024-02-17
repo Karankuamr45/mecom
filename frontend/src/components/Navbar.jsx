@@ -22,7 +22,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-800 py-4">
+    <nav className="bg-gray-800 py-4 fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -35,20 +35,13 @@ const Navbar = () => {
               <Link to="/" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</Link>
               <Link to="/about" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">About</Link>
               <Link to="/contact" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Contact</Link>
-              {/* <Link to="/register" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Register</Link>
-              <Link to="/login" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Login</Link> */}
-              {!isAuthenticated && ( // Show Register and Login links only if user is not authenticated
-                <>
-                  <Link to="/register" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</Link>
-                  <Link to="/login" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</Link>
-                </>
+              {!isAuthenticated && (
+                <Link to="/register" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</Link>
               )}
-              {isAuthenticated && user && user.role === 'admin' && ( // Show Register and Login links only if user is not authenticated
-                <>
-                  <Link to="/dashboard" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</Link>
-                </>
+              {isAuthenticated && user && user.role === 'admin' && (
+                <Link to="/dashboard" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</Link>
               )}
-              {isAuthenticated && ( // Show logout button if user is authenticated
+              {isAuthenticated && (
                 <button onClick={handleLogout} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</button>
               )}
             </div>
@@ -76,20 +69,13 @@ const Navbar = () => {
             <Link to="/" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</Link>
             <Link to="/about" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</Link>
             <Link to="/contact" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Contact</Link>
-            {/* <Link to="/register" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Register</Link>
-            <Link to="/login" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Login</Link> */}
-             {!isAuthenticated && ( // Show Register and Login links only if user is not authenticated
-                <>
-                  <Link to="/register" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</Link>
-                  <Link to="/login" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</Link>
-                </>
-              )}
-              {isAuthenticated && user && user.role === 'admin' && ( // Show Register and Login links only if user is not authenticated
-                <>
-                  <Link to="/dashboard" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</Link>
-                </>
-              )}
-            {isAuthenticated && ( // Show logout button if user is authenticated
+            {!isAuthenticated && (
+              <Link to="/register" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Register</Link>
+            )}
+            {isAuthenticated && user && user.role === 'admin' && (
+              <Link to="/dashboard" onClick={closeMenu} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Dashboard</Link>
+            )}
+            {isAuthenticated && (
               <button onClick={handleLogout} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Logout</button>
             )}
           </div>

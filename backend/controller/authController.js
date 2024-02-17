@@ -3,12 +3,66 @@ import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 
+// const registerController = async (req, res) => {
+//   try {
+//     const { username, email, password } = req.body;
+
+//     const existingEmail = await userModel.findOne({ email });
+//     const existingUsername = await userModel.findOne({ username });
+
+//     if (existingEmail) {
+//       return res.status(400).json({ message: "Email is already registered" });
+//     }
+
+//     if (existingUsername) {
+//       return res.status(400).json({ message: "Username is already taken" });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     const newUser = new userModel({
+//       username,
+//       email,
+//       password: hashedPassword,
+//     });
+
+//     await newUser.save();
+
+//     // Generate JWT token
+//     const token = jwt.sign(
+//       { userId: newUser._id, email: newUser.email },
+//       "mynameiskaranandiliveinramparkext",
+//       { expiresIn: "1d" }
+//     );
+
+//     // Generate OTP
+//     const otp = generateOTP();
+
+//     // Save OTP to user document
+//     newUser.otp = otp;
+//     await newUser.save();
+
+//     // Send OTP to the user's email
+//     await sendOtpEmail(email, otp);
+
+//     res
+//       .status(201)
+//       .json({ message: "User Registered Successfully", newUser, token });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server Error" });
+//   }
+// };
+
 const registerController = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    // Convert username to lowercase
+    const lowerCaseUsername = username.toLowerCase();
+
     const existingEmail = await userModel.findOne({ email });
-    const existingUsername = await userModel.findOne({ username });
+    const existingUsername = await userModel.findOne({ username: lowerCaseUsername });
 
     if (existingEmail) {
       return res.status(400).json({ message: "Email is already registered" });
@@ -21,7 +75,7 @@ const registerController = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new userModel({
-      username,
+      username: lowerCaseUsername, // Save the lowercase username
       email,
       password: hashedPassword,
     });
@@ -53,6 +107,7 @@ const registerController = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 const generateOTP = () => {
   // Generate a random 6-digit OTP

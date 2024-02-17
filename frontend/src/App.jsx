@@ -1,7 +1,7 @@
 // App.jsx
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Layout from "./components/Layout"; // Import the Layout component
 import Home from "./components/Home";
 import About from "./components/About";
 import Contact from "./components/Contact";
@@ -13,12 +13,12 @@ import PrivateRoute from "./components/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
 
 const App = () => {
+  
   return (
     <AuthProvider>
       <Router>
-        <div>
-          <Navbar />
-          <div className="container mx-auto mt-4">
+        <Layout> {/* Wrap your routes with the Layout component */}
+          
             <Routes>
               <Route path="/"  element={<Home />} />
               <Route path="/about" element={<About />} />
@@ -30,12 +30,10 @@ const App = () => {
                 <Route path="/dashboard" element={<Dashboard />} />
               </Route>
 
-              
-
               <Route path="/otp-verification" element={<OTPVerification />} />
             </Routes>
-          </div>
-        </div>
+          
+        </Layout>
       </Router>
     </AuthProvider>
   );
