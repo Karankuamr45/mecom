@@ -7,7 +7,7 @@ const Layout = ({ children }) => {
   const location = useLocation();
 
   // Define an array of routes where you want to hide the Navbar
-  const hideNavbarRoutes = ['/otp-verification'];
+  const hideNavbarRoutes = ['/otp-verification','/dashboard'];
 
   // Check if the current route is in the hideNavbarRoutes array
   const hideNavbar = hideNavbarRoutes.includes(location.pathname);
@@ -15,7 +15,7 @@ const Layout = ({ children }) => {
   return (
     <div>
       {!hideNavbar && <Navbar />}
-      <div className={`container mx-auto mt-4 ${hideNavbar ? 'pt-0' : 'pt-24'}`}>
+      <div className={`  ${hideNavbar ? 'pt-0' : 'pt-24'}`}>
         {children}
       </div>
     </div>

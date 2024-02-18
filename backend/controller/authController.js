@@ -105,7 +105,7 @@ const verifyOtpController = async (req, res) => {
       extractedToken,
       "mynameiskaranandiliveinramparkext"
     );
-    console.log("decodedToken", decodedToken);
+    
     const userId = decodedToken.userId;
 
     // Find the user by ID

@@ -36,7 +36,9 @@ const App = () => {
             />
 
             <Route element={<PrivateRoute />}>
+              
               <Route path="/dashboard" element={<Dashboard />} />
+
             </Route>
 
             <Route path="/otp-verification" element={<OTPVerification />} />
