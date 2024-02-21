@@ -64,7 +64,7 @@ const RegistrationForm = () => {
     if (validateForm()) {
       setLoading(true); // Start loading when form is submitted
       try {
-        const response = await axios.post('https://mecom-jvcy.onrender.com/auth/register', formData);
+        const response = await axios.post('http://localhost:4500/auth/register', formData);
         const token = response.data.token;
         localStorage.setItem('token', token);
   

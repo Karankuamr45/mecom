@@ -23,7 +23,7 @@ const OTPVerification = () => {
       const token = localStorage.getItem('token');
 
       const response = await axios.post(
-        'https://mecom-jvcy.onrender.com/auth/verify-otp',
+        'http://localhost:4500/auth/verify-otp',
         { otp },
         {
           headers: {

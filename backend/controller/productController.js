@@ -111,8 +111,8 @@ const updateProductController = async (req, res) => {
 
 const getAllProductController = async (req, res) => {
   try {
-    // Fetch all products from the database
-    const products = await productModel.find();
+    // Fetch all products from the database and populate the 'category' field with 'name'
+    const products = await productModel.find().populate('category', 'name');
 
     // Check if products exist
     if (!products || products.length === 0) {
@@ -125,6 +125,7 @@ const getAllProductController = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 const searchProductsController = async (req, res) => {
     try {
@@ -151,32 +152,63 @@ const searchProductsController = async (req, res) => {
 
   const filterAndSortProductsController = async (req, res) => {
     try {
-      // Extract filter and sort parameters from request query
-      const { category, priceMin, priceMax, sortBy, sortOrder } = req.query;
-      
-      // Construct filter object based on request query parameters
-      const filter = {};
-      if (category) filter.category = category;
-      if (priceMin) filter.price = { $gte: parseInt(priceMin) };
-      if (priceMax) filter.price = { ...filter.price, $lte: parseInt(priceMax) };
+        // Extract filter, sort, and pagination parameters from request query
+        const { category, priceMin, priceMax, sortBy, sortOrder, page, limit } = req.query;
+        
+        // Construct filter object based on request query parameters
+        const filter = {};
+        if (category) filter.category = category;
+        if (priceMin) filter.price = { $gte: parseInt(priceMin) };
+        if (priceMax) filter.price = { ...filter.price, $lte: parseInt(priceMax) };
 
-      let sortOption = {};
-      if (sortBy && sortOrder) {
-        sortOption[sortBy] = sortOrder;
-      } else {
-        // Set default sorting option if sortBy or sortOrder is not provided
-        sortOption = { createdAt: 'desc' }; // Example default sorting option
-      }
+        let sortOption = {};
+        if (sortBy && sortOrder) {
+            sortOption[sortBy] = sortOrder === 'asc' ? 1 : -1;
+        } else {
+            // Set default sorting option if sortBy or sortOrder is not provided
+            sortOption = { createdAt: -1 }; // Example default sorting option
+        }
 
-      // Perform find operation with applied filter and sort options
-      const products = await productModel.find(filter).sort(sortOption);
-  
-      res.json(products);
+        // Calculate skip value for pagination
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+
+        // Perform find operation with applied filter, sort, and pagination options
+        const products = await productModel.find(filter)
+            .sort(sortOption)
+            .skip(skip)
+            .limit(parseInt(limit));
+
+        res.json(products);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+
+const relatedProductController = async (req, res) => {
+  try {
+      const productIds = req.query.productIds; // Assuming productIds is an array of product IDs
+
+      // Find products by IDs and populate the related products field
+      const products = await Product.find({ _id: { $in: productIds } }).populate('relatedProducts');
+
+      if (!products) {
+          return res.status(404).json({ message: 'Products not found' });
+      }
+
+      // Extract related products from all products
+      const relatedProducts = products.reduce((acc, product) => {
+          acc.push(...product.relatedProducts);
+          return acc;
+      }, []);
+
+      res.json(relatedProducts);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+}
 
   
 
@@ -187,4 +219,5 @@ export {
   getAllProductController,
   searchProductsController,
   filterAndSortProductsController,
+  relatedProductController,
 };

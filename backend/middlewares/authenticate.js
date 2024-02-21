@@ -11,7 +11,7 @@ const authenticateUser = (req, res, next) => {
 
   try {
     // Verify the token
-    console.log("token",token)
+    
     const extractedToken = token.split(" ")[1];
     const decoded = jwt.verify(extractedToken, 'mynameiskaranandiliveinramparkext');
 

@@ -27,14 +27,17 @@ function Login() {
         throw new Error('Please provide both email and password.');
       }
 
-      const response = await axios.post('https://mecom-jvcy.onrender.com/auth/login', { email, password });
+      const response = await axios.post('http://localhost:4500/auth/login', { email, password });
+      
       const token = response.data.token;
+      
       const userData = response.data.user; 
 
       if (!userData) {
         throw new Error('User data is not available.');
       }
       localStorage.setItem('token', token);
+      
       login(userData); 
       navigate('/');
     } catch (error) {
